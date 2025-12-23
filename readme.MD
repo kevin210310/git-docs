@@ -656,3 +656,247 @@ git diff '@{yesterday}'
 # Cambios desde hace 1 semana
 git diff '@{1 week ago}'
 ```
+
+## Comando reflog
+
+`git reflog` es como una **caja negra** o **red de seguridad** de Git. Registra **cada movimiento de HEAD** en tu repositorio local, incluso los que no aparecen en `git log`.
+
+### ¿Qué Registra?
+
+Reflog guarda:
+
+- Commits
+- Resets
+- Checkouts
+- Merges
+- Rebases
+- Amendos
+- ¡Prácticamente TODO lo que hagas!
+
+### Ver el Reflog
+
+```bash
+# Ver el historial completo de HEAD
+git reflog
+
+# Equivalente a:
+git reflog show HEAD
+```
+
+**Salida típica:**
+```
+abc1234 HEAD@{0}: commit: Agrega nueva funcionalidad
+def5678 HEAD@{1}: reset: moving to HEAD~1
+9abcdef HEAD@{2}: commit: Commit que luego reseteé
+1234567 HEAD@{3}: checkout: moving from main to feature
+8901234 HEAD@{4}: commit: Actualiza README
+```
+
+### Entendiendo la Salida
+```
+hash    HEAD@{n}: acción: descripción
+│       │         │        │
+│       │         │        └─ Qué pasó
+│       │         └─────────── Tipo de operación
+│       └──────────────────── Índice temporal (0 = más reciente)
+└──────────────────────────── Hash del commit
+```
+
+### Casos de Uso Principales
+
+#### **Recuperar un Commit Perdido**
+
+```bash
+# Hiciste un reset --hard por error
+git reset --hard HEAD~3
+# ¡Oh no! Perdiste 3 commits
+
+# Ver qué tenías antes
+git reflog
+
+# Recuperar (usa el hash antes del reset)
+git reset --hard HEAD@{1}
+# o
+git reset --hard abc1234
+```
+
+#### **Recuperar una Rama Eliminada**
+
+```bash
+# Eliminaste una rama por error
+git branch -D feature-importante
+# ¡Ups!
+
+# Ver el reflog
+git reflog
+
+# Buscar el último commit de esa rama
+# Recrear la rama en ese punto
+git checkout -b feature-importante abc1234
+```
+
+#### **Deshacer un Rebase**
+
+```bash
+# Hiciste un rebase que salió mal
+git rebase main
+# Todo está roto
+
+# Ver el estado antes del rebase
+git reflog
+
+# Volver al estado antes del rebase
+git reset --hard HEAD@{1}
+```
+
+#### **Recuperar Cambios Después de Amend**
+
+```bash
+# Hiciste amend y perdiste el commit anterior
+git commit --amend
+
+# Ver el commit original
+git reflog
+
+# Crear una rama con el commit viejo
+git branch commit-viejo HEAD@{1}
+```
+
+### Reflog de Ramas Específicas
+
+```bash
+# Ver reflog de una rama específica
+git reflog show main
+git reflog show feature-branch
+
+# Ver reflog con más detalles
+git reflog show --all
+```
+
+### Opciones Útiles
+
+```bash
+# Ver con fechas
+git reflog show --date=iso
+
+# Limitar número de entradas
+git reflog -10
+
+# Ver con más contexto
+git reflog show --pretty=fuller
+
+# Solo de los últimos N días
+git reflog --since="2 days ago"
+```
+
+### Ejemplo Práctico Completo
+
+**Escenario:** Hiciste varios cambios y te arrepentiste
+
+```bash
+# Estado inicial
+git log --oneline
+# abc1234 Commit 3
+# def5678 Commit 2
+# 9abcdef Commit 1
+
+# Hiciste reset hard
+git reset --hard HEAD~2
+# Solo queda: 9abcdef Commit 1
+
+# ¡Oh no! Quiero recuperar todo
+git reflog
+# abc1234 HEAD@{0}: reset: moving to HEAD~2
+# def5678 HEAD@{1}: commit: Commit 2
+# 9abcdef HEAD@{2}: commit: Commit 1
+
+# Recuperar
+git reset --hard HEAD@{1}
+# o
+git reset --hard abc1234
+
+# ¡Todo de vuelta!
+git log --oneline
+# abc1234 Commit 3
+# def5678 Commit 2
+# 9abcdef Commit 1
+```
+
+### Limitaciones Importantes
+
+⚠️ **Reflog es LOCAL**
+
+- Solo existe en tu máquina
+- No se comparte con `push`/`pull`
+- Si clonas un repo, no verás el reflog anterior
+
+⚠️ **Tiene Expiración**
+
+- Por defecto guarda 90 días
+- Los commits inalcanzables se eliminan después de 30 días
+- Puedes cambiar esto:
+
+```bash
+# Cambiar tiempo de expiración
+git config --global gc.reflogExpire 180  # 180 días
+git config --global gc.reflogExpireUnreachable 60  # 60 días
+```
+
+⚠️ **No Todo Se Guarda**
+
+- Solo cambios commitados
+- Archivos sin commitear no están en reflog
+
+### Comandos Relacionados
+
+```bash
+# Limpiar reflog manualmente (¡cuidado!)
+git reflog expire --expire=now --all
+git gc --prune=now
+
+# Ver objetos huérfanos
+git fsck --lost-found
+```
+
+### Alias Útiles
+
+```bash
+# Reflog más legible
+git config --global alias.rl "reflog --pretty=format:'%C(yellow)%h%C(reset) - %C(cyan)%gd%C(reset) %C(green)(%ar)%C(reset) %s %C(bold blue)<%an>%C(reset)'"
+
+# Uso:
+git rl
+```
+
+### Tips de Recuperación
+
+1. **Siempre mira reflog primero** cuando pierdas algo
+2. **Actúa rápido** - tienes 30-90 días según config
+3. **Busca el hash correcto** - usa `HEAD@{n}` o el hash directo
+4. **Crea una rama de respaldo** antes de intentar recuperar:
+
+```bash
+   git branch backup-antes-recuperar
+```
+
+### Ejemplo Real: "Arruiné Todo"
+
+```bash
+# 1. ¡Pánico! Hice algo mal
+git reflog
+
+# 2. Identificar el estado bueno (antes de arruinarlo)
+# Busca la línea antes de tu error
+
+# 3. Ver qué había en ese punto
+git show HEAD@{5}
+
+# 4. Si es lo correcto, recuperar
+git reset --hard HEAD@{5}
+
+# 5. Verificar
+git log
+git status
+```
+
+Reflog es tu **salvavidas en Git**. Casi cualquier cosa que hagas mal se puede recuperar si actúas a tiempo.
