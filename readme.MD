@@ -95,3 +95,42 @@ git config --global core.autocrlf input  ## Mac/Linux
 git config --global init.defaultBranch main
 
 ```
+
+## Comando add
+
+git add agrega archivos al staging area (área de preparación), es decir, los marca para incluirlos en el próximo commit.
+
+### Usos Comunes
+
+#### Agregar un archivo específico:
+
+```bash
+git add archivo.txt
+git add src/index.js
+```
+
+#### Agregar todos los archivos modificados:
+
+```bash
+git add .              # Agrega todo desde el directorio actual
+git add -A             # Agrega todo el repositorio
+git add --all          # Lo mismo que -A
+```
+
+#### Agregar solo archivos modificados (no nuevos):
+
+```bash
+git add -u
+```
+
+#### Agregar múltiples archivos:
+
+```bash
+git add archivo1.txt archivo2.js carpeta/
+```
+
+#### Agregar de forma interactiva (elegir qué cambios incluir):
+
+```bash
+git add -p    # Te pregunta por cada cambio
+```
