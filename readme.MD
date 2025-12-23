@@ -294,3 +294,34 @@ git checkout abc1234    # Ver el estado del repositorio en ese commit
 ```bash
 git checkout main    # O el nombre de tu rama
 ```
+
+## Git reset
+
+git reset es un comando poderoso que te permite mover el puntero HEAD y deshacer commits o cambios en el staging area.
+
+### Los Tres Modos de Reset
+
+- **-soft (Suave)** Mueve HEAD pero mantiene los cambios en staging:
+
+```bash
+git reset --soft HEAD~1
+# Deshace el último commit pero los archivos quedan en staging
+# Útil para rehacer un commit
+```
+
+- **-mixed (Mixto - predeterminado)** Mueve HEAD y quita del staging, pero mantiene los cambios en archivos:
+
+```bash
+git reset HEAD~1
+git reset --mixed HEAD~1    # Mismo efecto
+# Deshace el commit y quita del staging
+# Los cambios siguen en tus archivos
+```
+
+- **-hard (Duro)** Mueve HEAD y elimina todos los cambios:
+
+```bash
+git reset --hard HEAD~1
+# ⚠️ PELIGROSO: Elimina el commit Y los cambios
+# No se puede recuperar fácilmente
+```
