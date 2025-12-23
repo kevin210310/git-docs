@@ -1186,3 +1186,6 @@ git branch --format='%(refname:short) %(committerdate:relative)'
 # Con colores
 git branch --format='%(color:green)%(refname:short)%(color:reset) - %(contents:subject)'
 ```
+
+
+## git tags
