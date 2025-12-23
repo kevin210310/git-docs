@@ -295,7 +295,7 @@ git checkout abc1234    # Ver el estado del repositorio en ese commit
 git checkout main    # O el nombre de tu rama
 ```
 
-## Git reset
+## Comando reset
 
 git reset es un comando poderoso que te permite mover el puntero HEAD y deshacer commits o cambios en el staging area.
 
@@ -324,4 +324,103 @@ git reset --mixed HEAD~1    # Mismo efecto
 git reset --hard HEAD~1
 # ⚠️ PELIGROSO: Elimina el commit Y los cambios
 # No se puede recuperar fácilmente
+```
+
+## Comando alias
+Los alias de Git te permiten crear comandos cortos para operaciones que usas frecuentemente. Se configuran con git config.
+
+### Crear Alias
+
+#### Alias Simples
+```bash
+# Sintaxis básica
+git config --global alias.nombre-corto 'comando-completo'
+
+# Ejemplos comunes
+git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+```
+Ahora puedes usar:
+```bash
+git st        # En vez de git status
+git co main   # En vez de git checkout main
+git br        # En vez de git branch
+git ci -m "mensaje"  # En vez de git commit -m "mensaje"
+```
+
+#### Alias Útiles y Populares
+Comandos con Opciones
+```bash
+# Log bonito de una línea
+git config --global alias.lg "log --oneline --graph --decorate --all"
+
+# Status corto
+git config --global alias.s "status -s"
+
+# Último commit
+git config --global alias.last "log -1 HEAD"
+
+# Diferencias staged
+git config --global alias.staged "diff --staged"
+
+# Ver ramas ordenadas por fecha
+git config --global alias.branches "branch -a --sort=-committerdate"
+
+# Deshacer último commit (soft)
+git config --global alias.undo "reset --soft HEAD~1"
+
+# Listar alias
+git config --global alias.aliases "config --get-regexp alias"
+```
+
+#### Alias Avanzados
+```bash
+# Ver quién modificó cada línea
+git config --global alias.who "blame -w -C -C -C"
+
+# Log con gráfico colorido
+git config --global alias.tree "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
+
+# Commits de hoy
+git config --global alias.today "log --since=midnight --author='Tu Nombre' --oneline"
+
+# Agregar y commitear en un paso
+git config --global alias.ac "!git add -A && git commit -m"
+
+# Ver cambios de un archivo
+git config --global alias.filelog "log -u"
+```
+
+#### Alias con Comandos de Shell
+Usa ! para ejecutar comandos de shell:
+```bash
+# Contar commits
+git config --global alias.count "!git log --oneline | wc -l"
+
+# Limpiar ramas locales ya mergeadas
+git config --global alias.cleanup "!git branch --merged | grep -v '\\*\\|main\\|master' | xargs -n 1 git branch -d"
+
+# Abrir repositorio en GitHub
+git config --global alias.open "!open $(git remote get-url origin)"
+```
+
+#### Ver y Gestionar Alias
+
+Ver Todos los Alias
+```bash
+git config --global --get-regexp alias
+# O si creaste el alias "aliases":
+git aliases
+```
+
+Eliminar un Alias
+```bash
+git config --global --unset alias.nombre-corto
+```
+
+Editar Directamente el Archivo de Config
+```bash
+git config --global --edit
 ```
