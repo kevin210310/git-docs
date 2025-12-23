@@ -135,7 +135,7 @@ git add archivo1.txt archivo2.js carpeta/
 git add -p    # Te pregunta por cada cambio
 ```
 
-## Git commit
+## Comando commit
 
 git commit guarda los cambios que tienes en el staging area (los que agregaste con git add) en el historial de tu repositorio.
 
@@ -167,3 +167,71 @@ git commit -am "Mensaje"
 git commit --amend -m "Nuevo mensaje"
 # Útil si olvidaste algo o quieres cambiar el mensaje
 ```
+
+## Comando status
+
+git status es uno de los comandos más útiles de Git. Te muestra el estado actual de tu repositorio.
+
+### Qué Te Muestra
+
+#### Información que obtienes:
+
+- Archivos modificados
+- Archivos nuevos (sin rastrear)
+- Archivos en staging (listos para commit)
+- Rama actual
+- Si estás adelantado o atrasado respecto al remoto
+
+#### Ejemplo de Salida
+
+```bash
+git status
+```
+
+**Podrías ver algo como:**
+```
+On branch main
+Your branch is up to date with 'origin/main'.
+
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   archivo1.txt
+        new file:   archivo2.js
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes)
+        modified:   archivo3.css
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+        nuevo-archivo.html
+
+```
+
+#### Versión Corta
+
+Para una salida más compacta:
+
+```bash
+git status -s
+# o
+git status --short
+
+```
+
+**Salida tipo:**
+```
+M  archivo1.txt       # Modificado y en staging
+M  archivo3.css       # Modificado pero NO en staging
+A  archivo2.js        # Agregado (nuevo en staging)
+?? nuevo-archivo.html # Sin rastrear
+
+```
+
+#### Estados de los Archivos
+
+- Sin rastrear (Untracked): Archivos nuevos que Git no conoce
+- Modificado (Modified): Archivos que cambiaron pero no están en staging
+- En staging (Staged): Archivos listos para el próximo commit
+- Sin cambios (Unmodified): Archivos que no han cambiado
