@@ -988,3 +988,201 @@ git rm -r --cached node_modules/
 echo "node_modules/" >> .gitignore
 git commit -m "Elimina node_modules del repositorio"
 ```
+
+## Comando branch
+
+`git branch` es el comando para **crear, listar, renombrar y eliminar ramas** en Git. Las ramas te permiten trabajar en diferentes versiones de tu proyecto simultáneamente.
+
+### Listar Ramas
+
+#### Ver Ramas Locales
+
+```bash
+# Listar todas las ramas locales
+git branch
+
+# Salida (el * indica la rama actual):
+# * main
+#   feature-login
+#   bugfix-header
+```
+
+#### Ver Todas las Ramas (Locales y Remotas)
+
+```bash
+# Ver ramas locales y remotas
+git branch -a
+
+# Solo ramas remotas
+git branch -r
+```
+
+#### Con Más Información
+
+```bash
+# Ver último commit de cada rama
+git branch -v
+
+# Ver ramas y su relación con remotas
+git branch -vv
+
+# Ver ramas mergeadas a la actual
+git branch --merged
+
+# Ver ramas NO mergeadas a la actual
+git branch --no-merged
+```
+
+### Crear Ramas
+
+#### Crear Nueva Rama
+
+```bash
+# Crear rama (sin cambiar a ella)
+git branch nombre-rama
+
+# Ejemplo
+git branch feature-nueva
+```
+
+#### Crear y Cambiar a la Rama
+
+```bash
+# Crear y cambiar en un paso
+git checkout -b nombre-rama
+
+# O con el comando moderno
+git switch -c nombre-rama
+
+# Ejemplo
+git checkout -b feature-login
+```
+
+#### Crear Rama desde un Commit Específico
+
+```bash
+# Crear rama desde un commit
+git branch nombre-rama abc1234
+
+# Crear desde un tag
+git branch hotfix v1.2.3
+
+# Crear desde otra rama
+git branch nueva-rama main
+```
+
+### Cambiar de Rama
+
+```bash
+# Método tradicional
+git checkout nombre-rama
+
+# Método moderno (Git 2.23+)
+git switch nombre-rama
+
+# Ejemplos
+git checkout main
+git switch feature-login
+```
+
+### Renombrar Ramas
+
+#### Renombrar Rama Actual
+
+```bash
+# Renombrar la rama en la que estás
+git branch -m nuevo-nombre
+
+# Ejemplo
+git branch -m feature-auth
+```
+
+#### Renombrar Otra Rama
+
+```bash
+# Renombrar sin estar en ella
+git branch -m nombre-viejo nombre-nuevo
+
+# Ejemplo
+git branch -m feature-old feature-new
+```
+
+#### Forzar Renombrado (Sobrescribir)
+
+```bash
+# Si ya existe una rama con ese nombre
+git branch -M nuevo-nombre
+```
+
+### Eliminar Ramas
+
+#### Eliminar Rama Local (Seguro)
+
+```bash
+# Eliminar solo si está mergeada
+git branch -d nombre-rama
+
+# Ejemplo
+git branch -d feature-completada
+```
+
+#### Eliminar Rama Local (Forzado)
+
+```bash
+# Eliminar aunque no esté mergeada (pierdes cambios)
+git branch -D nombre-rama
+
+# Ejemplo
+git branch -D feature-cancelada
+```
+
+#### Eliminar Rama Remota
+
+```bash
+# Eliminar rama en el servidor
+git push origin --delete nombre-rama
+
+# O sintaxis alternativa
+git push origin :nombre-rama
+
+# Ejemplo
+git push origin --delete feature-vieja
+```
+
+### Opciones Útiles
+
+#### Ordenar Ramas
+
+```bash
+# Por fecha de último commit (más recientes primero)
+git branch --sort=-committerdate
+
+# Por fecha (más antiguas primero)
+git branch --sort=committerdate
+
+# Alfabéticamente
+git branch --sort=refname
+```
+
+#### Filtrar Ramas
+
+```bash
+# Ramas que contienen un commit específico
+git branch --contains abc1234
+
+# Ramas que NO contienen un commit
+git branch --no-contains abc1234
+
+# Ramas con patrón
+git branch --list "feature-*"
+```
+
+#### Formateo Personalizado
+
+```bash
+# Formato personalizado
+git branch --format='%(refname:short) %(committerdate:relative)'
+
+# Con colores
+git branch --format='%(color:green)%(refname:short)%(color:reset) - %(contents:subject)'
+```
