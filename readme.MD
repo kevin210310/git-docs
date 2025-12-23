@@ -1187,5 +1187,485 @@ git branch --format='%(refname:short) %(committerdate:relative)'
 git branch --format='%(color:green)%(refname:short)%(color:reset) - %(contents:subject)'
 ```
 
+## Commando merge
 
-## git tags
+`git merge` combina los cambios de una rama en otra. Es la forma de integrar el trabajo de diferentes ramas.
+
+### Uso Básico
+
+#### Merge Simple
+
+```bash
+# 1. Cambiar a la rama que recibirá los cambios
+git checkout main
+
+# 2. Mergear otra rama en la actual
+git merge feature-login
+
+# Ejemplo completo
+git checkout main
+git merge feature-nueva
+```
+
+### Tipos de Merge
+
+#### 1. **Fast-Forward Merge** (Avance Rápido)
+
+Ocurre cuando no hay commits nuevos en la rama destino.
+
+```bash
+# Situación:
+# main:    A---B
+#               \
+# feature:       C---D
+
+git checkout main
+git merge feature
+
+# Resultado (main simplemente avanza):
+# main:    A---B---C---D
+```
+
+**Características:**
+
+- No crea commit de merge
+- Historial lineal
+- Más limpio pero pierdes info de la rama
+
+#### 2. **Three-Way Merge** (Merge de Tres Vías)
+
+Ocurre cuando ambas ramas tienen commits nuevos.
+
+```bash
+# Situación:
+# main:    A---B---C
+#               \
+# feature:       D---E
+
+git checkout main
+git merge feature
+
+# Resultado (crea commit de merge):
+# main:    A---B---C---M
+#               \     /
+# feature:       D---E
+```
+
+**Características:**
+
+- Crea commit de merge automático
+- Preserva historia de ambas ramas
+- Muestra claramente qué se mergeó
+
+#### 3. **Squash Merge** (Merge Aplastado)
+
+Combina todos los commits de la rama en uno solo.
+
+```bash
+git checkout main
+git merge --squash feature-branch
+
+# Commits de feature se convierten en uno solo
+# Debes hacer commit manualmente
+git commit -m "Agrega feature completa"
+```
+
+### Opciones Importantes
+
+#### -no-ff (No Fast-Forward)
+
+```bash
+# Forzar creación de commit de merge
+git merge --no-ff feature-branch
+
+# Útil para mantener historia de ramas
+# Siempre crea commit M incluso si puede hacer fast-forward
+```
+
+#### -ff-only (Solo Fast-Forward)
+
+```bash
+# Solo mergear si puede hacer fast-forward
+git merge --ff-only feature-branch
+
+# Si no puede, falla en vez de crear commit de merge
+# Útil para mantener historial lineal
+```
+
+#### -squash (Aplastar Commits)
+
+```bash
+# Combinar todos los commits en uno
+git merge --squash feature-branch
+git commit -m "Mensaje descriptivo de todo el feature"
+
+# Útil para limpiar historial de commits experimentales
+```
+
+#### -no-commit
+
+```bash
+# Hacer merge pero no commitear automáticamente
+git merge --no-commit feature-branch
+
+# Revisa los cambios antes de commitear
+git status
+git diff --staged
+git commit -m "Merge después de revisar"
+```
+
+### Flujo Completo
+
+#### Merge Exitoso
+
+```bash
+# 1. Actualizar rama principal
+git checkout main
+git pull origin main
+
+# 2. Ver qué se va a mergear (opcional)
+git log main..feature-branch
+git diff main...feature-branch
+
+# 3. Hacer el merge
+git merge feature-branch
+
+# 4. Pushear
+git push origin main
+
+# 5. Limpiar rama (opcional)
+git branch -d feature-branch
+git push origin --delete feature-branch
+```
+
+#### Merge con Conflictos
+
+```bash
+# 1. Intentar merge
+git checkout main
+git merge feature-branch
+
+# 2. Git muestra conflictos:
+# Auto-merging archivo.txt
+# CONFLICT (content): Merge conflict in archivo.txt
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# 3. Ver archivos con conflictos
+git status
+
+# 4. Abrir archivo y verás marcadores:
+# <<<<<<< HEAD
+# Contenido en main
+# =======
+# Contenido en feature-branch
+# >>>>>>> feature-branch
+
+# 5. Resolver manualmente, eliminar marcadores
+
+# 6. Marcar como resuelto
+git add archivo.txt
+
+# 7. Completar el merge
+git commit
+
+# 8. O abortar si decides no mergear
+git merge --abort
+```
+
+### Resolver Conflictos
+
+#### Marcadores de Conflicto
+
+```
+<<<<<< HEAD
+Código en tu rama actual (main)
+=======
+Código en la rama que estás mergeando (feature)
+>>>>>> feature-branch
+```
+
+#### Herramientas para Resolver
+
+```bash
+# Ver archivos en conflicto
+git status
+
+# Usar herramienta visual
+git mergetool
+
+# Ver diferencias
+git diff
+
+# Ver conflictos específicamente
+git diff --name-only --diff-filter=U
+```
+
+#### Estrategias de Resolución
+
+```bash
+# Aceptar "nuestros" cambios (rama actual)
+git checkout --ours archivo.txt
+git add archivo.txt
+
+# Aceptar "sus" cambios (rama que mergeas)
+git checkout --theirs archivo.txt
+git add archivo.txt
+
+# Resolver manualmente después
+git add archivo.txt
+```
+
+### Abortar un Merge
+
+```bash
+# Si el merge no ha terminado (hay conflictos)
+git merge --abort
+
+# Vuelve al estado antes del merge
+# Útil si te das cuenta que no era el momento
+```
+
+### Ejemplos Prácticos
+
+#### Feature Branch Workflow
+
+```bash
+# Desarrollador trabaja en feature
+git checkout -b feature-api
+# ... trabaja ...
+git commit -m "Implementa API endpoint"
+git commit -m "Agrega tests"
+git commit -m "Actualiza documentación"
+
+# Antes de mergear, actualizar desde main
+git checkout main
+git pull origin main
+git checkout feature-api
+git merge main  # Integrar últimos cambios
+
+# Resolver conflictos si hay
+# ...
+
+# Ahora sí, mergear a main
+git checkout main
+git merge --no-ff feature-api -m "Merge feature-api: Agrega nuevo endpoint"
+
+# Pushear y limpiar
+git push origin main
+git branch -d feature-api
+git push origin --delete feature-api
+```
+
+#### Hotfix Urgente
+
+```bash
+# Crear rama de hotfix desde main
+git checkout main
+git checkout -b hotfix-security
+
+# Arreglar el bug
+git commit -m "Corrige vulnerabilidad de seguridad"
+
+# Mergear a main
+git checkout main
+git merge hotfix-security
+
+# Mergear también a develop (si usas gitflow)
+git checkout develop
+git merge hotfix-security
+
+# Limpiar
+git branch -d hotfix-security
+```
+
+#### Merge con Squash (Historia Limpia)
+
+```bash
+# Feature con muchos commits experimentales
+git checkout main
+git merge --squash feature-experimental
+
+# Esto NO crea commit automáticamente
+git status  # Verás todos los cambios staged
+
+# Crear un commit limpio con todo
+git commit -m "Implementa feature experimental
+
+- Agrega funcionalidad X
+- Optimiza rendimiento
+- Actualiza tests"
+
+git push origin main
+git branch -d feature-experimental
+```
+
+### Ver Historial de Merges
+
+```bash
+# Ver commits de merge
+git log --merges
+
+# Ver solo commits no-merge
+git log --no-merges
+
+# Ver gráfico de merges
+git log --oneline --graph --all
+
+# Ver cuándo se mergeó una rama
+git log --oneline --graph --all | grep "Merge"
+```
+
+### Merge vs Rebase
+
+| Aspecto | Merge | Rebase |
+| --- | --- | --- |
+| **Historial** | Preserva historia completa | Reescribe historia lineal |
+| **Commits** | Crea commit de merge | No crea commits extras |
+| **Seguridad** | Seguro para ramas públicas | Peligroso en ramas compartidas |
+| **Claridad** | Muestra cuándo se mergeó | Historia más limpia |
+| **Uso** | Integrar features a main | Actualizar feature desde main |
+
+```bash
+# Merge (recomendado para main)
+git checkout main
+git merge feature-branch
+
+# Rebase (recomendado para actualizar tu feature)
+git checkout feature-branch
+git rebase main
+```
+
+### Estrategias de Merge
+
+```bash
+# Estrategia por defecto (recursive)
+git merge feature-branch
+
+# Estrategia "ours" (preferir cambios de rama actual)
+git merge -s ours feature-branch
+
+# Estrategia "theirs" (preferir cambios de rama mergeada)
+git merge -X theirs feature-branch
+
+# Estrategia "ours" opción (en conflictos, usar nuestros)
+git merge -X ours feature-branch
+```
+
+### Verificar Antes de Mergear
+
+```bash
+# Ver qué commits se van a mergear
+git log ..feature-branch
+git log main..feature-branch
+
+# Ver cambios completos
+git diff main...feature-branch
+
+# Ver solo archivos que cambiaron
+git diff --name-only main...feature-branch
+
+# Ver estadísticas
+git diff --stat main...feature-branch
+```
+
+### Problemas Comunes
+
+#### "Already up to date"
+
+```bash
+# La rama que intentas mergear no tiene nada nuevo
+# Esto es normal y no hay nada que hacer
+```
+
+#### Conflictos Complejos
+
+```bash
+# Si hay muchos conflictos
+# Opción 1: Abortar y planear mejor
+git merge --abort
+
+# Opción 2: Usar herramienta visual
+git mergetool
+
+# Opción 3: Aceptar todo de una rama
+git checkout --theirs .
+git add .
+git commit
+```
+
+#### Merge Accidental
+
+```bash
+# Si hiciste merge por error (antes de push)
+git reset --hard HEAD~1
+
+# Si ya pusheaste, crear merge que revierta
+git revert -m 1 HEAD
+```
+
+### Buenas Prácticas
+
+1. **Actualizar antes de mergear**
+
+```bash
+   git checkout main
+   git pull origin main
+```
+
+2. **Probar antes de mergear**
+
+```bash
+   git checkout feature
+   # Correr tests
+   # Si todo OK, entonces mergear
+```
+
+3. **Mensajes claros de merge**
+
+```bash
+   git merge feature-branch -m "Merge feature: Implementa sistema de auth
+   
+   - Agrega login/logout
+   - Integra JWT
+   - Actualiza tests"
+```
+
+4. **Eliminar ramas después**
+
+```bash
+   git branch -d feature-mergeada
+```
+
+5. **Usar --no-ff para features importantes**
+
+```bash
+   git merge --no-ff feature-importante
+   # Preserva historia de la rama
+```
+
+### Alias Útiles
+
+```bash
+# Merge con --no-ff por defecto
+git config --global alias.mff "merge --no-ff"
+
+# Ver qué se va a mergear
+git config --global alias.merge-preview "log --oneline --graph HEAD..FETCH_HEAD"
+
+# Abortar merge rápido
+git config --global alias.abort "merge --abort"
+
+# Uso:
+git mff feature-branch
+git merge-preview
+git abort
+```
+
+### Tips
+
+- Usa `-no-ff` para features importantes (preserva historia)
+- Usa `-squash` para limpiar commits experimentales
+- Siempre actualiza main antes de mergear
+- Resuelve conflictos con calma, no apresuradamente
+- Prueba después de resolver conflictos
+- Documenta merges complejos en el mensaje de commit
