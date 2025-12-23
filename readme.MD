@@ -900,3 +900,91 @@ git status
 ```
 
 Reflog es tu **salvavidas en Git**. Casi cualquier cosa que hagas mal se puede recuperar si actúas a tiempo.
+
+## Comando mv
+
+`git mv` es el comando de Git para **mover o renombrar archivos** manteniendo el historial. Es equivalente a mover/renombrar y hacer `git add` en un solo paso.
+
+### Uso Básico
+
+#### Renombrar un Archivo
+
+```bash
+# Cambiar nombre de archivo
+git mv archivo-viejo.txt archivo-nuevo.txt
+
+# Ejemplo real
+git mv index.html home.html
+git mv script.js main.js
+```
+
+#### Mover un Archivo
+
+```bash
+# Mover a un directorio
+git mv archivo.txt carpeta/
+
+# Mover y renombrar al mismo tiempo
+git mv archivo.txt carpeta/nuevo-nombre.txt
+
+# Ejemplo real
+git mv README.md docs/README.md
+```
+
+#### Mover Múltiples Archivos
+
+```bash
+# Mover varios archivos a una carpeta
+git mv archivo1.txt archivo2.txt archivo3.txt carpeta/
+```
+
+## Comando rm
+
+`git rm` elimina archivos del repositorio de Git **y** del sistema de archivos. Es la forma correcta de eliminar archivos en Git.
+
+### Uso Básico
+
+#### Eliminar un Archivo
+
+```bash
+# Eliminar archivo del repositorio y del disco
+git rm archivo.txt
+
+# Eliminar múltiples archivos
+git rm archivo1.txt archivo2.js archivo3.css
+```
+
+#### Eliminar con Patrones
+
+```bash
+# Eliminar todos los .log
+git rm *.log
+
+# Eliminar todos los archivos en una carpeta
+git rm carpeta/*
+
+# Eliminar archivos que coincidan con patrón
+git rm test_*.js
+```
+
+### Opciones Importantes
+
+#### -cached (Eliminar Solo de Git, No del Disco)
+
+```bash
+# Mantener el archivo localmente pero quitarlo de Git
+git rm --cached archivo.txt
+
+# Útil para archivos que olvidaste agregar a .gitignore
+git rm --cached secretos.env
+echo "secretos.env" >> .gitignore
+```
+
+**Caso de uso común:**
+
+```bash
+# Subiste node_modules por error
+git rm -r --cached node_modules/
+echo "node_modules/" >> .gitignore
+git commit -m "Elimina node_modules del repositorio"
+```
