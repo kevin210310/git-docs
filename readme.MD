@@ -134,3 +134,36 @@ git add archivo1.txt archivo2.js carpeta/
 ```bash
 git add -p    # Te pregunta por cada cambio
 ```
+
+## Git commit
+
+git commit guarda los cambios que tienes en el staging area (los que agregaste con git add) en el historial de tu repositorio.
+
+### Usos Más Comunes
+
+#### Commit con mensaje en una línea:
+
+```bash
+git commit -m "Mensaje descriptivo del cambio"
+```
+
+#### Commit con mensaje multilínea:
+
+```bash
+git commit
+# Se abre tu editor para escribir un mensaje más detallado
+```
+
+#### Commit saltándose el staging (add + commit):
+
+```bash
+git commit -am "Mensaje"
+# Solo funciona con archivos ya rastreados, no con archivos nuevos
+```
+
+#### Modificar el último commit:
+
+```bash
+git commit --amend -m "Nuevo mensaje"
+# Útil si olvidaste algo o quieres cambiar el mensaje
+```
