@@ -235,3 +235,62 @@ A  archivo2.js        # Agregado (nuevo en staging)
 - Modificado (Modified): Archivos que cambiaron pero no están en staging
 - En staging (Staged): Archivos listos para el próximo commit
 - Sin cambios (Unmodified): Archivos que no han cambiado
+
+## Comando checkout
+
+git checkout es un comando muy versátil que se usa principalmente para cambiar entre ramas o restaurar archivos.
+
+### Usos Principales
+
+#### Cambiar de Rama
+
+Cambiar a una rama existente:
+
+```bash
+git checkout nombre-rama
+git checkout main
+git checkout desarrollo
+```
+
+Crear y cambiar a una nueva rama:
+
+```bash
+git checkout -b nueva-rama
+# Equivale a:
+# git branch nueva-rama
+# git checkout nueva-rama
+```
+
+#### Restaurar Archivos
+
+Descartar cambios en un archivo (volver a la última versión commiteada):
+
+```bash
+git checkout -- archivo.txt
+git checkout archivo.txt
+```
+
+Restaurar todos los archivos modificados:
+
+```bash
+git checkout -- .
+```
+
+Recuperar un archivo de otro commit:
+
+```bash
+git checkout abc1234 archivo.txt    # Por hash del commit
+git checkout HEAD~2 archivo.txt     # 2 commits atrás
+```
+
+#### Ver un Commit Específico (Modo Detached HEAD)
+
+```bash
+git checkout abc1234    # Ver el estado del repositorio en ese commit
+```
+
+⚠️ Advertencia: Esto te pone en "detached HEAD state". Para volver:
+
+```bash
+git checkout main    # O el nombre de tu rama
+```
