@@ -1,0 +1,55 @@
+    {
+    "champions": [
+        {
+            "id": 1,
+            "name": "Aatrox",
+            "role": "Fighter",
+            "difficulty": "Medium",
+            "abilities": {
+                "passive": {
+                    "name": "Toque letal",
+                    "mechanic": "Cada vez que Aatrox golpea con sus habilidades o ataques básicos, reduce el cooldown de su pasiva. Cuando está disponible, su siguiente ataque básico gana rango extra y hace daño adicional."
+                    "statics": [
+                        "damage": {
+                            "type": "physical",
+                            "amount": 20-60 (based on level)
+                        }
+                    ]
+                },
+                "Q": "The Darkin Blade",
+                "W": "Infernal Chains",
+                "E": "Umbral Dash",
+                "R":{
+                    "nam    e": "El aniquilador de mundos",
+                    "mechanic": "Aatrox se lanza hacia adelante, ganando velocidad de movimiento y curándose por el daño infligido a los campeones enemigos."
+                }
+            }
+        },
+        {
+            "id": 2,
+            "name": "Ahri",
+            "role": "Mage",
+            "difficulty": "Medium",
+            "abilities": {
+                "passive": "Essence Theft",
+                "Q": "Charm",
+                "W": "Vixen's Cunning",
+                "E": "Orb of Deception",
+                "R": "Ultimate"
+            } 
+        },
+        {
+            "id": 3,
+            "name": "Akali",
+            "role": "Assassin",
+            "difficulty": "High",
+            "abilities": {
+                "passive": "Assassin's Mark",
+                "Q": "Five Point Strike",
+                "W": "Twilight Shroud",
+                "E": "Shuriken Flip",
+                "R": "Perfect Execution"
+            }
+        }
+    ]
+}
