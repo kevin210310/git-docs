@@ -1,5 +1,5 @@
 # Curso de Git
-
+## Linea Comandos 
 ## Comando init
 
 Comando para inicializar un proyecto vació de Git, este crea la carpeta **.git/** donde se encontrara toda la configuración del repositorio.
